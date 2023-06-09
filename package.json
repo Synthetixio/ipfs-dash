@@ -1,0 +1,17 @@
+{
+  "name": "root",
+  "version": "2.74.1",
+  "workspaces": [
+    "**/*"
+  ],
+  "private": true,
+  "scripts": {
+    "start": "node server",
+    "pretty": "prettier . --write",
+    "pretty:check": "prettier . --check"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.8"
+  },
+  "packageManager": "yarn@3.5.1"
+}
