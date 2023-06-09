@@ -1,7 +1,7 @@
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-const cp = require('child_process');
+const http = require('node:http');
+const fs = require('node:fs');
+const path = require('node:path');
+const cp = require('node:child_process');
 
 const indexHtml = fs.readFileSync('./index.html', 'utf-8');
 const files = {
