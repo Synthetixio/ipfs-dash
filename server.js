@@ -7,6 +7,7 @@ const indexHtml = fs.readFileSync('./index.html', 'utf-8');
 const files = {
   'index.html': indexHtml,
   'favicon.ico': fs.readFileSync('./favicon.ico'),
+  'logo.svg': fs.readFileSync('./logo.svg'),
   'main.js': fs.readFileSync('./main.js', 'utf-8'),
   'main.css': fs.readFileSync('./main.css', 'utf-8'),
 };
@@ -16,7 +17,7 @@ const state = {
 };
 
 function render() {
-  return (files['index.html'] = indexHtml.replace('%%__STATE__%%', JSON.stringify(state, null, 2)));
+  return (files['index.html'] = indexHtml.replace('___STATE___', JSON.stringify(state, null, 2)));
 }
 
 const server = http.createServer((req, res) => {
@@ -24,6 +25,12 @@ const server = http.createServer((req, res) => {
     case req.url.endsWith('/api'): {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(state, null, 2), 'utf-8');
+      return;
+    }
+
+    case req.url.endsWith('/logo.svg'): {
+      res.writeHead(200, { 'Content-Type': 'image/svg+xml' });
+      res.end(files['logo.svg']);
       return;
     }
 
@@ -90,7 +97,21 @@ async function updatePeers() {
   Object.assign(state, { peers });
   render();
 }
-setInterval(updatePeers, 60_000);
-Promise.all([updatePeers()]).then(() =>
-  server.listen(3000, '0.0.0.0', () => console.log('Server running at http://0.0.0.0:3000/'))
-);
+//setInterval(updatePeers, 60_000);
+//Promise.all([updatePeers()]).then(() =>
+render();
+server.listen(3000, '0.0.0.0', () => console.log('Server running at http://0.0.0.0:3000/'));
+//);
+
+if (process.env.NODE_ENV !== 'production') {
+  fs.watch('.', (eventType, filename) => {
+    if (filename in files) {
+      fs.readFile(filename, 'utf-8', (err, content) => {
+        if (!err && content) {
+          Object.assign(files, { [filename]: content });
+        }
+      });
+      return;
+    }
+  });
+}

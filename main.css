@@ -9,4 +9,70 @@
 html {
   font-family: Avenir, 'Helvetica Neue', sans-serif;
   font-size: 16px;
+  color: #fff;
+  background: #06061b;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  height: 70px;
+  padding: 0 20px;
+  border-bottom: 1px solid #303037;
+  gap: 20px;
+}
+
+h1 {
+  font-size: 16px;
+  flex: 1;
+}
+
+h2 {
+  text-align: center;
+}
+
+header > img[src='./logo.svg'] {
+  width: 200px;
+  max-width: 200px;
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+  background-color: #06061b;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(48, 48, 55, 0.44) 0px,
+    rgb(11, 11, 34) 1px,
+    transparent 0px,
+    transparent 50%
+  );
+  background-size: 8px 8px;
+}
+
+#peers {
+  margin: 0 auto;
+  min-width: 300px;
+}
+
+#peers tbody td {
+  font-family: Monaco, Consolas, monospace;
+  font-size: 12px;
+  padding: 5px 10px;
+  whspsace: nowrap;
+}
+
+#peers tbody td:nth-child(2) {
+  overflow: hidden;
+  max-width: 100px;
 }
