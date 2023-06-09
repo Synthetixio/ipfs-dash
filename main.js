@@ -1,5 +1,5 @@
 async function updateState() {
-  const res = await fetch('/api');
+  const res = await fetch('api');
   if (!res.ok) {
     const text = await res.text();
     console.error(new Error(text));

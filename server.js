@@ -5,22 +5,10 @@ const cp = require('node:child_process');
 
 const indexHtml = fs.readFileSync('./index.html', 'utf-8');
 const files = {
-  '/': {
-    content: indexHtml,
-    contentType: 'text/html',
-  },
-  '/favicon.ico': {
-    content: fs.readFileSync('./favicon.ico'),
-    contentType: 'image/x-icon',
-  },
-  '/main.js': {
-    content: fs.readFileSync('./main.js', 'utf-8'),
-    contentType: 'text/javascript',
-  },
-  '/main.css': {
-    content: fs.readFileSync('./main.css', 'utf-8'),
-    contentType: 'text/css',
-  },
+  'index.html': indexHtml,
+  'favicon.ico': fs.readFileSync('./favicon.ico'),
+  'main.js': fs.readFileSync('./main.js', 'utf-8'),
+  'main.css': fs.readFileSync('./main.css', 'utf-8'),
 };
 
 const state = {
@@ -28,15 +16,42 @@ const state = {
 };
 
 function render() {
-  return (files['/'].content = indexHtml.replace('%%__STATE__%%', JSON.stringify(state, null, 2)));
+  return (files['index.html'] = indexHtml.replace('%%__STATE__%%', JSON.stringify(state, null, 2)));
 }
 
 const server = http.createServer((req, res) => {
-  if (req.url === '/api') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(state, null, 2), 'utf-8');
-    return;
+  switch (true) {
+    case req.url.endsWith('/api'): {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(state, null, 2), 'utf-8');
+      return;
+    }
+
+    case req.url.endsWith('/favicon.ico'): {
+      res.writeHead(200, { 'Content-Type': 'image/x-icon' });
+      res.end(files['favicon.ico']);
+      return;
+    }
+
+    case req.url.endsWith('/main.js'): {
+      res.writeHead(200, { 'Content-Type': 'text/javascript' });
+      res.end(files['main.js']);
+      return;
+    }
+
+    case req.url.endsWith('/main.css'): {
+      res.writeHead(200, { 'Content-Type': 'text/css' });
+      res.end(files['main.css']);
+      return;
+    }
+
+    case req.url.endsWith('/'): {
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(files['index.html']);
+      return;
+    }
   }
+
   if (req.url in files) {
     const file = files[req.url];
     res.writeHead(200, { 'Content-Type': file.contentType });
