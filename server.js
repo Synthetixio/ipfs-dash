@@ -76,18 +76,21 @@ async function updatePeers() {
       }
       try {
         const result = JSON.parse(stdout);
-        return resolve(result.map(({ id, peername, version }) => ({ id, peername, version })));
+        return resolve(
+          result
+            .map(({ id, peername, version }) => ({ id, peername, version }))
+            .sort((a, b) => a.id.localeCompare(b.id))
+        );
       } catch (e) {
         return resolve([]);
       }
       return resolve([]);
     })
   );
-  console.log(`peers`, peers);
   Object.assign(state, { peers });
   render();
 }
-setInterval(updatePeers, 10_000);
+setInterval(updatePeers, 60_000);
 Promise.all([updatePeers()]).then(() =>
   server.listen(3000, '0.0.0.0', () => console.log('Server running at http://0.0.0.0:3000/'))
 );
