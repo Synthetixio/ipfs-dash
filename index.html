@@ -6,10 +6,17 @@
     <meta content="ie=edge" http-equiv="X-UA-Compatible" />
     <meta content="Dashboard for Synthetix IPFS Cluster" name="description" />
     <title>Dashboard for Synthetix IPFS Cluster</title>
-    <link rel="stylesheet" href="main.css" />
-    <script src="main.js"></script>
+    <link rel="stylesheet" href="./main.css" />
+    <script id="peers">
+      ((w) => {
+        w.state = JSON.parse(`%%__STATE__%%`);
+      })(window);
+    </script>
+    <script src="./main.js"></script>
   </head>
-  <body class="loaded">
-    <div id="app"></div>
+  <body>
+    <div id="app">
+      <pre id="state"></pre>
+    </div>
   </body>
 </html>
