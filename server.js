@@ -85,7 +85,7 @@ async function updatePeers() {
         const result = JSON.parse(stdout);
         return resolve(
           result
-            .map(({ id, peername, version }) => ({ id, peername, version }))
+            .map(({ id, version }) => ({ id, version }))
             .sort((a, b) => a.id.localeCompare(b.id))
         );
       } catch (e) {
