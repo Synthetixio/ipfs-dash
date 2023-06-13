@@ -7,7 +7,7 @@
 }
 
 html {
-  font-family: Avenir, 'Helvetica Neue', sans-serif;
+  font-family: 'Inter', 'Helvetica Neue', sans-serif;
   font-size: 16px;
   color: #fff;
   background: #06061b;
@@ -20,28 +20,30 @@ body {
 }
 
 header {
+  height: 70px;
+  border-bottom: 1px solid #303037;
+}
+
+header .wrap {
+  width: 100%;
+  max-width: 720px;
+  margin: 20px auto;
+
   display: flex;
   align-content: center;
   align-items: center;
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: flex-start;
-  height: 70px;
-  padding: 0 20px;
-  border-bottom: 1px solid #303037;
-  gap: 20px;
-}
-
-h1 {
-  font-size: 16px;
-  flex: 1;
 }
 
 h2 {
   text-align: center;
+  margin-top: 12px;
+  margin-bottom: 16px;
 }
 
-header > img[src='./logo.svg'] {
+header .wrap > img[src='./logo.svg'] {
   width: 200px;
   max-width: 200px;
 }
@@ -62,17 +64,31 @@ main {
 
 #peers {
   margin: 0 auto;
-  min-width: 300px;
+  min-width: 720px;
+}
+
+#peers th {
+  text-align: left;
 }
 
 #peers tbody td {
   font-family: Monaco, Consolas, monospace;
   font-size: 12px;
   padding: 5px 10px;
-  whspsace: nowrap;
+  white-space: nowrap;
 }
 
 #peers tbody td:nth-child(2) {
   overflow: hidden;
   max-width: 100px;
+}
+
+.btn {
+  display: block;
+  margin-left: auto;
+  color: white;
+  background: #15a0be;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 4px;
 }

@@ -18,7 +18,7 @@ function init() {
   function render() {
     const $peersHeader = document.querySelector('#peersHeader');
     if ($peersHeader) {
-      $peersHeader.innerText = state.peers.length === 1 ? '1 Peer' : `${state.peers.length} Peers`;
+      $peersHeader.innerText = state.peers.length === 1 ? '1 Node' : `${state.peers.length} Nodes`;
     }
     const $peers = document.querySelector('#peers tbody');
     if ($peers) {

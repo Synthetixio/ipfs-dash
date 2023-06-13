@@ -4,9 +4,15 @@
     <meta charset="UTF-8" />
     <meta content="initial-scale=1, width=device-width" name="viewport" />
     <meta content="ie=edge" http-equiv="X-UA-Compatible" />
-    <meta content="Dashboard for Synthetix IPFS Cluster" name="description" />
-    <title>Dashboard for Synthetix IPFS Cluster</title>
+    <meta content="Synthetix IPFS Cluster" name="description" />
+    <title>Synthetix IPFS Cluster</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./main.css" />
     <script id="state" type="application/json">
       ___STATE___
@@ -15,12 +21,14 @@
   </head>
   <body>
     <header>
-      <img src="./logo.svg" alt="Synthetix" />
-      <h1>IPFS Cluster Dashboard</h1>
+      <div class="wrap">
+        <img src="./logo.svg" alt="Synthetix" />
+        <a class="btn" href="https://github.com/synthetixio/synthetix-node">Run a Node</a>
+      </div>
     </header>
     <main>
       <section>
-        <h2 id="peersHeader">0 Peers</h2>
+        <h2 id="peersHeader">0 Nodes</h2>
         <table id="peers">
           <thead>
             <tr>
