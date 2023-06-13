@@ -21,6 +21,7 @@ pids
 .idea
 .vscode
 
+node_modules/
 
 .yarn/*
 !.yarn/cache
