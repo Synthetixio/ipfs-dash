@@ -83,8 +83,48 @@ const server = http.createServer((req, res) => {
 });
 
 async function updateStats() {
+  try {
+    const { RepoSize: repoSize, NumObjects: numObjects } = await (
+      await fetch('http://127.0.0.1:5001/api/v0/repo/stat', { method: 'POST' })
+    ).json();
+    Object.assign(state, { repoSize, numObjects });
+  } catch (e) {
+    console.error(e);
+  }
+
+  try {
+    const { TotalIn: totalIn, TotalOut: totalOut } = await (
+      await fetch('http://127.0.0.1:5001/api/v0/stats/bw', { method: 'POST' })
+    ).json();
+    Object.assign(state, { totalIn, totalOut });
+  } catch (e) {
+    console.error(e);
+  }
+
+  const [pid] = await new Promise((resolve) =>
+    cp.exec('pgrep -f "ipfs daemon"', (err, stdout, stderr) => {
+      if (err) {
+        console.error(err);
+        return resolve(null);
+      }
+      if (stderr) {
+        console.error(new Error(stderr));
+        return resolve(null);
+      }
+      return resolve(
+        stdout
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean)
+      );
+    })
+  );
+  if (!pid) {
+    return;
+  }
+
   const uptime = await new Promise((resolve) =>
-    cp.exec('ps -p $(pgrep -f "ipfs daemon") -o lstart=', (err, stdout, stderr) => {
+    cp.exec(`ps -p ${pid} -o lstart=`, (err, stdout, stderr) => {
       if (err) {
         console.error(err);
         return resolve(null);
@@ -105,34 +145,12 @@ async function updateStats() {
 
   const uptimeHours = uptime / (60 * 60);
   const uptimeDays = uptimeHours / 24;
-  try {
-    const { RepoSize: repoSize, NumObjects: numObjects } = await (
-      await fetch('http://127.0.0.1:5001/api/v0/repo/stat', { method: 'POST' })
-    ).json();
-    Object.assign(state, { repoSize, numObjects });
-  } catch (e) {
-    console.error(e);
-  }
+  const dailyIn = state.totalIn / uptimeDays;
+  const hourlyIn = state.totalIn / uptimeHours;
+  const dailyOut = state.totalOut / uptimeDays;
+  const hourlyOut = state.totalOut / uptimeHours;
+  Object.assign(state, { dailyIn, hourlyIn, dailyOut, hourlyOut });
 
-  try {
-    const { TotalIn: totalIn, TotalOut: totalOut } = await (
-      await fetch('http://127.0.0.1:5001/api/v0/stats/bw', { method: 'POST' })
-    ).json();
-    const dailyIn = totalIn / uptimeDays;
-    const hourlyIn = totalIn / uptimeHours;
-    const dailyOut = totalOut / uptimeDays;
-    const hourlyOut = totalOut / uptimeHours;
-    Object.assign(state, {
-      totalIn,
-      totalOut,
-      dailyIn,
-      hourlyIn,
-      dailyOut,
-      hourlyOut,
-    });
-  } catch (e) {
-    console.error(e);
-  }
   render();
 }
 
