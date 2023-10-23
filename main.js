@@ -1,19 +1,23 @@
 function humanReadableNumber(num) {
-  if (Math.abs(num) > 999999999)
-    return Math.sign(num) * (Math.abs(num) / 1000000000).toFixed(1) + 'B';
-  else if (Math.abs(num) > 999999)
-    return Math.sign(num) * (Math.abs(num) / 1000000).toFixed(1) + 'M';
-  else if (Math.abs(num) > 999) return Math.sign(num) * (Math.abs(num) / 1000).toFixed(1) + 'K';
-  else return Math.sign(num) * Math.abs(num);
+  if (Math.abs(num) >= 1_000_000_000) {
+    return Math.sign(num) * (Math.abs(num) / 1_000_000_000).toFixed(2) + ' B';
+  }
+  if (Math.abs(num) >= 1_000_000) {
+    return Math.sign(num) * (Math.abs(num) / 1_000_000).toFixed(2) + ' M';
+  }
+  if (Math.abs(num) >= 1_000) {
+    return Math.sign(num) * (Math.abs(num) / 1_000).toFixed(2) + ' K';
+  }
+  return Math.sign(num) * Math.abs(num);
 }
 
 function humanReadableSize(bytes) {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  if (bytes == 0) {
+  if (!bytes) {
     return '0 Bytes';
   }
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return `${Math.round(bytes / Math.pow(1024, i), 2)} ${sizes[i]}`;
+  return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
 }
 
 function humanReadableDuration(seconds) {
