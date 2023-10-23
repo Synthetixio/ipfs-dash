@@ -1,3 +1,41 @@
+function humanReadableNumber(num) {
+  if (Math.abs(num) > 999999999)
+    return Math.sign(num) * (Math.abs(num) / 1000000000).toFixed(1) + 'B';
+  else if (Math.abs(num) > 999999)
+    return Math.sign(num) * (Math.abs(num) / 1000000).toFixed(1) + 'M';
+  else if (Math.abs(num) > 999) return Math.sign(num) * (Math.abs(num) / 1000).toFixed(1) + 'K';
+  else return Math.sign(num) * Math.abs(num);
+}
+
+function humanReadableSize(bytes) {
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  if (bytes == 0) {
+    return '0 Bytes';
+  }
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return `${Math.round(bytes / Math.pow(1024, i), 2)} ${sizes[i]}`;
+}
+
+function humanReadableDuration(seconds) {
+  const days = Math.floor(seconds / (24 * 60 * 60));
+  seconds -= days * 24 * 60 * 60;
+  const hrs = Math.floor(seconds / 3600);
+  seconds -= hrs * 3600;
+  const mnts = Math.floor(seconds / 60);
+  seconds -= mnts * 60;
+
+  if (days > 0) {
+    return `${days} days, ${hrs} hours, ${mnts} minutes, and ${seconds} seconds`;
+  }
+  if (hrs > 0) {
+    return `${hrs} hours, ${mnts} minutes, and ${seconds} seconds`;
+  }
+  if (mnts > 0) {
+    return `${mnts} minutes, and ${seconds} seconds`;
+  }
+  return `${seconds} seconds`;
+}
+
 function init() {
   const state = JSON.parse(document.querySelector('#state').innerText);
 
@@ -12,6 +50,14 @@ function init() {
     if (JSON.stringify(state) !== JSON.stringify(payload)) {
       Object.assign(state, payload);
       window.postMessage('state updated');
+    }
+  }
+
+  function updateValue(key, value) {
+    if (key in state) {
+      document.querySelectorAll(`[data-value="${key}"]`).forEach(($value) => {
+        $value.innerText = value;
+      });
     }
   }
 
@@ -31,6 +77,16 @@ function init() {
         $peers.appendChild($tr);
       });
     }
+
+    updateValue('uptime', humanReadableDuration(state.uptime));
+    updateValue('numObjects', humanReadableNumber(state.numObjects));
+    updateValue('repoSize', humanReadableSize(state.repoSize));
+    updateValue('totalIn', humanReadableSize(state.totalIn));
+    updateValue('totalOut', humanReadableSize(state.totalOut));
+    updateValue('dailyIn', `${humanReadableSize(state.dailyIn)} / day`);
+    updateValue('hourlyIn', `${humanReadableSize(state.hourlyIn)} / hour`);
+    updateValue('dailyOut', `${humanReadableSize(state.dailyOut)} / day`);
+    updateValue('hourlyOut', `${humanReadableSize(state.hourlyOut)} / hour`);
   }
 
   window.addEventListener('message', (e) => {

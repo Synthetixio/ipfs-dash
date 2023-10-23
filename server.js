@@ -2,6 +2,9 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const cp = require('node:child_process');
+const os = require('node:os');
+
+const API_ENDPOINT = `http://127.0.0.1:${process.env.IPFS_API_PORT ?? 5002}/api/v0`;
 
 const indexHtml = fs.readFileSync('./index.html', 'utf-8');
 const files = {
@@ -14,6 +17,15 @@ const files = {
 
 const state = {
   peers: [],
+  uptime: 0,
+  numObjects: 0,
+  repoSize: 0,
+  totalIn: 0,
+  totalOut: 0,
+  dailyIn: 0,
+  hourlyIn: 0,
+  dailyOut: 0,
+  hourlyOut: 0,
 };
 
 function render() {
@@ -70,6 +82,60 @@ const server = http.createServer((req, res) => {
   return;
 });
 
+async function updateStats() {
+  const uptime = await new Promise((resolve) =>
+    cp.exec('ps -p $(pgrep -f "ipfs daemon") -o lstart=', (err, stdout, stderr) => {
+      if (err) {
+        console.error(err);
+        return resolve(null);
+      }
+      if (stderr) {
+        console.error(new Error(stderr));
+        return resolve(null);
+      }
+      const startDate = new Date(stdout);
+      const uptimeInSeconds = Math.floor((Date.now() - startDate.getTime()) / 1000);
+      return resolve(uptimeInSeconds);
+    })
+  );
+  if (!uptime) {
+    return;
+  }
+  Object.assign(state, { uptime });
+
+  const uptimeHours = uptime / (60 * 60);
+  const uptimeDays = uptimeHours / 24;
+  try {
+    const { RepoSize: repoSize, NumObjects: numObjects } = await (
+      await fetch('http://127.0.0.1:5001/api/v0/repo/stat', { method: 'POST' })
+    ).json();
+    Object.assign(state, { repoSize, numObjects });
+  } catch (e) {
+    console.error(e);
+  }
+
+  try {
+    const { TotalIn: totalIn, TotalOut: totalOut } = await (
+      await fetch('http://127.0.0.1:5001/api/v0/stats/bw', { method: 'POST' })
+    ).json();
+    const dailyIn = totalIn / uptimeDays;
+    const hourlyIn = totalIn / uptimeHours;
+    const dailyOut = totalOut / uptimeDays;
+    const hourlyOut = totalOut / uptimeHours;
+    Object.assign(state, {
+      totalIn,
+      totalOut,
+      dailyIn,
+      hourlyIn,
+      dailyOut,
+      hourlyOut,
+    });
+  } catch (e) {
+    console.error(e);
+  }
+  render();
+}
+
 async function updatePeers() {
   const peers = await new Promise((resolve) =>
     cp.exec("ipfs-cluster-ctl --enc=json peers ls | jq '[inputs]'", (err, stdout, stderr) => {
@@ -98,7 +164,8 @@ async function updatePeers() {
   render();
 }
 setInterval(updatePeers, 60_000);
-Promise.all([updatePeers()]).then(() =>
+setInterval(updateStats, 60_000);
+Promise.all([updatePeers(), updateStats()]).then(() =>
   server.listen(3000, '0.0.0.0', () => console.log('Server running at http://0.0.0.0:3000/'))
 );
 

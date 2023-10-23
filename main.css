@@ -25,22 +25,22 @@ header {
 }
 
 header .wrap {
-  width: 100%;
-  max-width: 720px;
-  margin: 20px auto;
-
   display: flex;
   align-content: center;
   align-items: center;
+
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: flex-start;
+  width: 100%;
+  max-width: 720px;
+  margin: 20px auto;
 }
 
 h2 {
-  text-align: center;
   margin-top: 12px;
   margin-bottom: 16px;
+  text-align: center;
 }
 
 header .wrap > img[src='./logo.svg'] {
@@ -54,7 +54,7 @@ main {
   background-color: #06061b;
   background-image: repeating-linear-gradient(
     135deg,
-    rgba(48, 48, 55, 0.44) 0px,
+    rgba(48, 48, 55, 0.2) 0px,
     rgb(11, 11, 34) 1px,
     transparent 0px,
     transparent 50%
@@ -62,16 +62,19 @@ main {
   background-size: 8px 8px;
 }
 
-#peers {
-  margin: 0 auto;
+#peers,
+#stats {
   min-width: 720px;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 #peers th {
   text-align: left;
 }
 
-#peers tbody td {
+#peers tbody td,
+#stats tbody td {
   font-family: Monaco, Consolas, monospace;
   font-size: 12px;
   padding: 5px 10px;
@@ -86,9 +89,9 @@ main {
 .btn {
   display: block;
   margin-left: auto;
-  color: white;
-  background: #15a0be;
-  text-decoration: none;
   padding: 6px 12px;
+  text-decoration: none;
+  color: white;
   border-radius: 4px;
+  background: #15a0be;
 }
