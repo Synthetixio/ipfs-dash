@@ -85,7 +85,7 @@ const server = http.createServer((req, res) => {
 async function updateStats() {
   try {
     const { RepoSize: repoSize, NumObjects: numObjects } = await (
-      await fetch('http://127.0.0.1:5001/api/v0/repo/stat', { method: 'POST' })
+      await fetch(`${API_ENDPOINT}/repo/stat`, { method: 'POST' })
     ).json();
     Object.assign(state, { repoSize, numObjects });
   } catch (e) {
@@ -94,7 +94,7 @@ async function updateStats() {
 
   try {
     const { TotalIn: totalIn, TotalOut: totalOut } = await (
-      await fetch('http://127.0.0.1:5001/api/v0/stats/bw', { method: 'POST' })
+      await fetch(`${API_ENDPOINT}/stats/bw`, { method: 'POST' })
     ).json();
     Object.assign(state, { totalIn, totalOut });
   } catch (e) {
